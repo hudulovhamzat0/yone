@@ -1,7 +1,7 @@
-Starting Nmap 7.93 ( https://nmap.org ) at 2025-08-07 08:20 +04
-Nmap scan report for kayzen.az (104.21.48.1)
-Host is up (0.068s latency).
-Other addresses for kayzen.az (not scanned): 104.21.112.1 104.21.64.1 104.21.16.1 104.21.32.1 104.21.96.1 104.21.80.1 2606:4700:3030::6815:2001 2606:4700:3030::6815:4001 2606:4700:3030::6815:3001 2606:4700:3030::6815:6001 2606:4700:3030::6815:5001 2606:4700:3030::6815:1001 2606:4700:3030::6815:7001
+Starting Nmap 7.93 ( https://nmap.org ) at 2025-08-07 12:30 +04
+Nmap scan report for big.az (104.21.79.141)
+Host is up (0.040s latency).
+Other addresses for big.az (not scanned): 172.67.146.14 2606:4700:3030::ac43:920e 2606:4700:3034::6815:4f8d
 
 PORT     STATE    SERVICE       VERSION
 21/tcp   filtered ftp
@@ -16,4 +16,4 @@ PORT     STATE    SERVICE       VERSION
 3389/tcp filtered ms-wbt-server
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 17.05 seconds
+Nmap done: 1 IP address (1 host up) scanned in 27.19 seconds

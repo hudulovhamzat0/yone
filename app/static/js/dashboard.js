@@ -80,31 +80,98 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.style.display = "block";
         });
 
-        function closeModal() {
-            modal.style.display = "none";
-        }
-
         window.addEventListener("click", function (e) {
             if (e.target === modal) {
                 closeModal();
             }
         });
+    }
 
-        // Close button inside modal
-        const closeBtn = modal.querySelector(".close-button");
-        if (closeBtn) {
-            closeBtn.addEventListener("click", closeModal);
-        }
+    // Custom Scan Modal Logic
+    const customModal = document.getElementById("customScanModal");
+    const customTrigger = document.getElementById("custom-scan-trigger");
+
+    if (customTrigger && customModal) {
+        customTrigger.addEventListener("click", function () {
+            customModal.style.display = "block";
+        });
+
+        window.addEventListener("click", function (e) {
+            if (e.target === customModal) {
+                closeCustomScanModal();
+            }
+        });
     }
 });
 
+// Modal functions
+function closeModal() {
+    document.getElementById("nmapModal").style.display = "none";
+}
+
+function closeCustomScanModal() {
+    document.getElementById("customScanModal").style.display = "none";
+}
+
+// Terminal functions
 function loadTerminalOutput() {
-    fetch("/terminal-output")
+    fetch("/terminal/output")
         .then(res => res.json())
         .then(data => {
             document.getElementById("terminal-content").textContent = data.output;
+        })
+        .catch(error => {
+            console.error('Error loading terminal output:', error);
         });
 }
 
+function clearTerminal() {
+    fetch("/terminal/clear", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("terminal-content").textContent = "Terminal temizlendi...";
+            }
+        })
+        .catch(error => {
+            console.error('Error clearing terminal:', error);
+        });
+}
+
+// Auto-refresh terminal output when on terminal section
+function startTerminalRefresh() {
+    setInterval(() => {
+        const terminalSection = document.getElementById("terminal");
+        if (terminalSection && terminalSection.classList.contains("active")) {
+            loadTerminalOutput();
+        }
+    }, 3000); // Refresh every 3 seconds
+}
+
 // Terminal sekmesine geçildiğinde çıktıyı göster
-document.querySelector('[data-section="terminal"]').addEventListener("click", loadTerminalOutput);
+document.querySelector('[data-section="terminal"]').addEventListener("click", function() {
+    loadTerminalOutput();
+    startTerminalRefresh();
+});
+
+// Refresh stats periodically
+function refreshStats() {
+    fetch("/api/stats")
+        .then(res => res.json())
+        .then(data => {
+            // Update stat numbers
+            const statCards = document.querySelectorAll('.stat-card .stat-number');
+            if (statCards.length >= 4) {
+                statCards[0].textContent = data.total_goals;
+                statCards[1].textContent = data.active_scans;
+                statCards[2].textContent = data.found_vulns;
+                statCards[3].textContent = data.critical_vulns;
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing stats:', error);
+        });
+}
+
+// Refresh stats every 30 seconds
+setInterval(refreshStats, 30000);

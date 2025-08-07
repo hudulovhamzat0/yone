@@ -73,7 +73,7 @@
             </div>
             <div class="form-container">
                 <h2>🎯 Yeni Hedef Ekle</h2>
-                <form action="{{ url_for('main.add_goal') }}" method="POST">
+                <form action="{{ url_for('goals.add_goal') }}" method="POST">
                     <div class="form-group">
                         <label for="url">Hedef URL</label>
                         <input type="text" name="url" id="url" required placeholder="https://example.com">
@@ -152,17 +152,18 @@
                 <p>Gerçekleştirilen ve planlanmış tarama işlemleri</p>
             </div>
             <div class="cards-grid">
-            <div class="card" id="nmap-scan-trigger">
-                <span class="card-icon">🛰️</span>
-                <h3>Port (Nmap) Taraması</h3>
-                <p>Hedef sistemde açık portları tespit etmek için hızlı Nmap taraması başlat.</p>
-            </div>
+                <div class="card" id="nmap-scan-trigger">
+                    <span class="card-icon">🛰️</span>
+                    <h3>Port (Nmap) Taraması</h3>
+                    <p>Hedef sistemde açık portları tespit etmek için hızlı Nmap taraması başlat.</p>
+                </div>
 
-                <div class="card">
+                <div class="card" id="custom-scan-trigger">
                     <span class="card-icon">🎯</span>
-                    <h3>Hedefli Tarama</h3>
+                    <h3>Özel Tarama</h3>
                     <p>Belirli servislere odaklanmış detaylı güvenlik analizi ve açık taraması.</p>
                 </div>
+                
                 <div class="card">
                     <span class="card-icon">🌐</span>
                     <h3>Ağ Taraması</h3>
@@ -179,16 +180,76 @@
                 {% endfor %}
             </div>
         </section>
+        
         <section id="terminal" class="content-section">
             <div class="dashboard-header">
-            <h1>🖥️ Terminal</h1>
-            <p>Nmap çıktıları ve komut sonuçları burada görüntülenir.</p>
+                <h1>🖥️ Terminal</h1>
+                <p>Komut çıktıları ve terminal işlemleri</p>
             </div>
-            <div class="terminal-box">
-            <pre id="terminal-content">Çıktı bekleniyor...</pre>
-        </div>
-</section>
+            
+            <div class="form-container">
+                <h2>💻 Komut Çalıştır</h2>
+                <form action="{{ url_for('terminal.execute_command') }}" method="POST">
+                    <div class="form-group">
+                        <label for="command">Komut (İzin verilen: ls, whoami, id, pwd, uname, uptime, ps, df, free)</label>
+                        <input type="text" name="command" id="command" required placeholder="ls -la" autocomplete="off">
+                    </div>
+                    <button type="submit" class="submit-btn">▶️ Çalıştır</button>
+                </form>
+            </div>
+            
+            <div class="terminal-box" style="background: #1a1a1a; border-radius: 15px; padding: 20px; margin-top: 20px;">
+                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: #00ff00; margin: 0;">Terminal Çıktısı</h3>
+                    <button onclick="clearTerminal()" class="submit-btn" style="padding: 8px 16px; font-size: 12px;">🗑️ Temizle</button>
+                </div>
+                <pre id="terminal-content" style="color: #00ff00; font-family: 'Courier New', monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto;">{{ terminal_output }}</pre>
+            </div>
+        </section>
     </main>
+
+    <!-- Nmap Taraması Modalı -->
+    <div id="nmapModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>🔍 Port (Nmap) Taraması</h2>
+            <form action="{{ url_for('scans.start_nmap') }}" method="POST">
+                <div class="form-group">
+                    <label for="target">Hedef Seç</label>
+                    <select name="target" id="target" required style="width: 100%; padding: 10px; border-radius: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
+                        {% for goal in goals %}
+                            <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">🚀 Taramayı Başlat</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Özel Tarama Modalı -->
+    <div id="customScanModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeCustomScanModal()">&times;</span>
+            <h2>🎯 Özel Tarama</h2>
+            <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
+                <div class="form-group">
+                    <label for="custom_target">Hedef</label>
+                    <input type="text" name="target" id="custom_target" required placeholder="192.168.1.1 veya domain.com">
+                </div>
+                <div class="form-group">
+                    <label for="scan_type">Tarama Tipi</label>
+                    <select name="scan_type" id="scan_type" required style="width: 100%; padding: 10px; border-radius: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
+                        <option value="basic">Temel Tarama</option>
+                        <option value="aggressive">Agresif Tarama</option>
+                        <option value="stealth">Gizli Tarama</option>
+                        <option value="udp">UDP Taraması</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">🚀 Özel Taramayı Başlat</button>
+            </form>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -224,27 +285,75 @@
                     }
                 });
             });
+
+        // Modal handlers
+        const nmapModal = document.getElementById("nmapModal");
+        const customScanModal = document.getElementById("customScanModal");
+        const nmapTrigger = document.getElementById("nmap-scan-trigger");
+        const customTrigger = document.getElementById("custom-scan-trigger");
+
+        if (nmapTrigger && nmapModal) {
+            nmapTrigger.addEventListener("click", function () {
+                nmapModal.style.display = "block";
+            });
+        }
+
+        if (customTrigger && customScanModal) {
+            customTrigger.addEventListener("click", function () {
+                customScanModal.style.display = "block";
+            });
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener("click", function (e) {
+            if (e.target === nmapModal) {
+                nmapModal.style.display = "none";
+            }
+            if (e.target === customScanModal) {
+                customScanModal.style.display = "none";
+            }
+        });
     });
+
+    function closeModal() {
+        document.getElementById("nmapModal").style.display = "none";
+    }
+
+    function closeCustomScanModal() {
+        document.getElementById("customScanModal").style.display = "none";
+    }
+
+    function loadTerminalOutput() {
+        fetch("/terminal/output")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("terminal-content").textContent = data.output;
+            })
+            .catch(err => console.error('Error loading terminal output:', err));
+    }
+
+    function clearTerminal() {
+        fetch("/terminal/clear", { method: "POST" })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("terminal-content").textContent = "Terminal temizlendi...";
+                }
+            })
+            .catch(err => console.error('Error clearing terminal:', err));
+    }
+
+    // Auto-refresh terminal output every 5 seconds when terminal tab is active
+    setInterval(() => {
+        const terminalSection = document.getElementById("terminal");
+        if (terminalSection && terminalSection.classList.contains("active")) {
+            loadTerminalOutput();
+        }
+    }, 5000);
+
+    // Terminal sekmesine geçildiğinde çıktıyı göster
+    document.querySelector('[data-section="terminal"]').addEventListener("click", loadTerminalOutput);
     </script>
 </body>
-<!-- Nmap Taraması Modalı -->
-<div id="nmapModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2>🔍 Port (Nmap) Taraması</h2>
-        <form action="{{ url_for('main.start_nmap') }}" method="POST">
-            <div class="form-group">
-                <label for="target">Hedef Seç</label>
-                <select name="target" id="target" required>
-                    {% for goal in goals %}
-                        <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit" class="submit-btn">🚀 Taramayı Başlat</button>
-        </form>
-    </div>
-</div>
-
 
 </html>

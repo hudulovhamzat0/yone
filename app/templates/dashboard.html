@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="nav-item active" data-section="overview">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Genel Bakış</span>
+        </div>
+        <div class="nav-item" data-section="goals">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-text">Hedefler</span>
+        </div>
+        <div class="nav-item" data-section="vulnerabilities">
+            <span class="nav-icon">🔐</span>
+            <span class="nav-text">Açıklar</span>
+        </div>
+        <div class="nav-item" data-section="scans">
+            <span class="nav-icon">🔍</span>
+            <span class="nav-text">Taramalar</span>
+        </div>
+        <div class="nav-item" data-section="terminal">
+            <span class="nav-icon">💻</span>
+            <span class="nav-text">Terminal</span>
+        </div>
+    </nav>
+
+    <!-- Ana İçerik -->
+    <main class="main-content">
+        <!-- Genel Bakış -->
+        <section id="overview" class="content-section active">
+            <div class="dashboard-header">
+                <h1>📊 Genel Bakış</h1>
+                <p>Sistem durumu ve genel istatistiklerin özeti</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_goals }}</div>
+                    <div class="stat-label">Toplam Hedef</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ active_scans }}</div>
+                    <div class="stat-label">Aktif Tarama</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ found_vulns }}</div>
+                    <div class="stat-label">Bulunan Açık</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ critical_vulns }}</div>
+                    <div class="stat-label">Kritik Seviye</div>
+                </div>
+            </div>
+            <!-- Açıklar Grafiği -->
+            <div class="chart-container">
+                <canvas id="vulnChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Hedefler -->
+        <section id="goals" class="content-section">
+            <div class="dashboard-header">
+                <h1>🎯 Hedefler</h1>
+                <p>Tanımlanan hedefler ve durumları</p>
+            </div>
+            <div class="form-container">
+                <h2>🎯 Yeni Hedef Ekle</h2>
+                <form action="{{ url_for('main.add_goal') }}" method="POST">
+                    <div class="form-group">
+                        <label for="url">Hedef URL</label>
+                        <input type="text" name="url" id="url" required placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="note">Not</label>
+                        <textarea name="note" id="note" placeholder="Bu hedef hakkında notlar..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">➕ Oluştur</button>
+                </form>
+            </div>
+
+            <div class="list-container">
+                {% for goal in goals %}
+                <div class="list-item">
+                    <h4>{{ goal.name }}</h4>
+                    <p>{{ goal.ip }}</p>
+                    <span class="status {{ goal.status }}">{{ goal.status|capitalize }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Açıklar -->
+        <section id="vulnerabilities" class="content-section">
+            <div class="dashboard-header">
+                <h1>🔐 Güvenlik Açıkları</h1>
+                <p>Tespit edilen güvenlik açıkları ve riskleri</p>
+            </div>
+            <div class="stats-grid">
+                {% set severity_counts = {
+                    'critical': 0,
+                    'high': 0,
+                    'medium': 0,
+                    'low': 0
+                } %}
+                {% for vuln in vulnerabilities %}
+                {% set _ = severity_counts.__setitem__(vuln.severity, severity_counts.get(vuln.severity, 0) + 1) %}
+                {% endfor %}
+                {% for level, count in severity_counts.items() %}
+                {% set color = {
+                    'critical': '#f44336',
+                    'high': '#FF9800',
+                    'medium': '#FFC107',
+                    'low': '#4CAF50'
+                }[level] %}
+                <div class="stat-card">
+                    <div class="stat-number" style="color: {{ color }};">{{ count }}</div>
+                    <div class="stat-label">{{ level|capitalize }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="list-container">
+                {% for vuln in vulnerabilities %}
+                {% set color = {
+                    'critical': '#f44336',
+                    'high': '#FF9800',
+                    'medium': '#FFC107',
+                    'low': '#4CAF50'
+                }[vuln.severity] %}
+                <div class="list-item" style="border-left-color: {{ color }};">
+                    <h4>{{ vuln.title }}</h4>
+                    <p>{{ vuln.description }}</p>
+                    <span class="status" style="background: {{ color }}33; color: {{ color }};">
+                        {{ vuln.severity|capitalize }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Taramalar -->
+        <section id="scans" class="content-section">
+            <div class="dashboard-header">
+                <h1>🔍 Taramalar</h1>
+                <p>Gerçekleştirilen ve planlanmış tarama işlemleri</p>
+            </div>
+            <div class="cards-grid">
+            <div class="card" id="nmap-scan-trigger">
+                <span class="card-icon">🛰️</span>
+                <h3>Port (Nmap) Taraması</h3>
+                <p>Hedef sistemde açık portları tespit etmek için hızlı Nmap taraması başlat.</p>
+            </div>
+
+                <div class="card">
+                    <span class="card-icon">🎯</span>
+                    <h3>Hedefli Tarama</h3>
+                    <p>Belirli servislere odaklanmış detaylı güvenlik analizi ve açık taraması.</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🌐</span>
+                    <h3>Ağ Taraması</h3>
+                    <p>Tüm ağ altyapısının kapsamlı güvenlik denetimi ve risk analizi.</p>
+                </div>
+            </div>
+            <div class="list-container">
+                {% for scan in scans %}
+                <div class="list-item">
+                    <h4>{{ scan.name }}</h4>
+                    <p>{{ scan.description if scan.description else "Açıklama yok" }}</p>
+                    <span class="status {{ scan.status }}">{{ scan.status|capitalize }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        <section id="terminal" class="content-section">
+            <div class="dashboard-header">
+            <h1>🖥️ Terminal</h1>
+            <p>Nmap çıktıları ve komut sonuçları burada görüntülenir.</p>
+            </div>
+            <div class="terminal-box">
+            <pre id="terminal-content">Çıktı bekleniyor...</pre>
+        </div>
+</section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/vulnerabilities")
+            .then(res => res.json())
+            .then(data => {
+                const counts = { critical: 0, high: 0, medium: 0, low: 0 };
+                data.forEach(v => {
+                    if (counts[v.severity] !== undefined) {
+                        counts[v.severity]++;
+                    }
+                });
+
+                const ctx = document.getElementById("vulnChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Kritik", "Yüksek", "Orta", "Düşük"],
+                        datasets: [{
+                            data: [counts.critical, counts.high, counts.medium, counts.low],
+                            backgroundColor: ["#f44336", "#FF9800", "#FFC107", "#4CAF50"]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            });
+    });
+    </script>
+</body>
+<!-- Nmap Taraması Modalı -->
+<div id="nmapModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>🔍 Port (Nmap) Taraması</h2>
+        <form action="{{ url_for('main.start_nmap') }}" method="POST">
+            <div class="form-group">
+                <label for="target">Hedef Seç</label>
+                <select name="target" id="target" required>
+                    {% for goal in goals %}
+                        <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="submit-btn">🚀 Taramayı Başlat</button>
+        </form>
+    </div>
+</div>
+
+
+</html>

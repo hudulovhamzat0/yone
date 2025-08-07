@@ -109,6 +109,7 @@
                 <h1>🔐 Güvenlik Açıkları</h1>
                 <p>Tespit edilen güvenlik açıkları ve riskleri</p>
             </div>
+
             <div class="stats-grid">
                 {% set severity_counts = {
                     'critical': 0,
@@ -132,24 +133,77 @@
                 </div>
                 {% endfor %}
             </div>
+
+            <div class="filter-buttons">
+                <button onclick="filterByStatus('all')">Tüm Açıklar</button>
+                <button onclick="filterByStatus('unresolved')">🕓 Bakılmayan</button>
+                <button onclick="filterByStatus('resolved')">✅ Düzeltilen</button>
+            </div>
+
+            <div class="filter-controls" style="margin-bottom: 1rem;">
+                <select id="severityFilter">
+                    <option value="all">Tüm Seviyeler</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+            </div>
+
             <div class="list-container">
-                {% for vuln in vulnerabilities %}
+            {% for vuln in vulnerabilities %}
                 {% set color = {
-                    'critical': '#f44336',
-                    'high': '#FF9800',
-                    'medium': '#FFC107',
-                    'low': '#4CAF50'
+                'critical': '#f44336',
+                'high': '#FF9800',
+                'medium': '#FFC107',
+                'low': '#4CAF50'
                 }[vuln.severity] %}
-                <div class="list-item" style="border-left-color: {{ color }};">
-                    <h4>{{ vuln.title }}</h4>
-                    <p>{{ vuln.description }}</p>
+                
+                <div class="list-item" data-severity="{{ vuln.severity }}" data-status="{{ 'resolved' if vuln.resolved else 'unresolved' }}" style="border-left-color: {{ color }};">
+                <h4>{{ vuln.title }}</h4>
+                <p>{{ vuln.description }}</p>
+                
+                <div class="vuln-footer">
+                    <input type="checkbox"
+                    onchange="toggleResolved('{{ vuln._id }}', this.checked)"
+                {% if vuln.resolved %}checked{% endif %}>
+                    Düzeltilen mi?
+                    </label>
+
                     <span class="status" style="background: {{ color }}33; color: {{ color }};">
-                        {{ vuln.severity|capitalize }}
+                    {{ vuln.severity|capitalize }} | {{ 'Düzeltilen' if vuln.resolved else 'Bakılmayan' }}
                     </span>
                 </div>
-                {% endfor %}
+                </div>
+            {% endfor %}
             </div>
+
+
+            <script>
+            let currentStatus = "all";
+
+            document.getElementById("severityFilter").addEventListener("change", () => {
+                filterByStatus(currentStatus);
+            });
+
+            function filterByStatus(status) {
+                currentStatus = status;
+                const items = document.querySelectorAll(".list-item");
+                const selectedSeverity = document.getElementById("severityFilter").value;
+
+                items.forEach(item => {
+                    const itemSeverity = item.dataset.severity;
+                    const itemStatus = item.dataset.status;
+
+                    const matchSeverity = selectedSeverity === "all" || itemSeverity === selectedSeverity;
+                    const matchStatus = status === "all" || itemStatus === status;
+
+                    item.style.display = (matchSeverity && matchStatus) ? "block" : "none";
+                });
+            }
+            </script>
         </section>
+
 
         <!-- Taramalar -->
         <section id="scans" class="content-section">
@@ -226,23 +280,69 @@
     </main>
 
     <!-- Nmap Taraması Modalı -->
-    <div id="nmapModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2>🔍 Port (Nmap) Taraması</h2>
-            <form action="{{ url_for('scans.start_nmap') }}" method="POST">
-                <div class="form-group">
-                    <label for="target">Hedef Seç</label>
-                    <select name="target" id="target" required style="width: 100%; padding: 10px; border-radius: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
-                        {% for goal in goals %}
-                            <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">🚀 Taramayı Başlat</button>
-            </form>
-        </div>
+    <!-- Nmap Modal -->
+<div id="nmapModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>🔍 Özelleştirilmiş Nmap Taraması</h2>
+        <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
+            <div class="form-group">
+                <label for="target">Hedef Seç</label>
+                <select name="target" id="target" required>
+                    {% for goal in goals %}
+                        <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="scan_type">Tarama Türü</label>
+                <select name="scan_type" id="scan_type" required>
+                    <option value="basic" selected>Temel (-sV)</option>
+                    <option value="stealth">Stealth (-sS)</option>
+                    <option value="udp">UDP (-sU)</option>
+                    <option value="aggressive">Agresif (-A)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="speed">Tarama Hızı (T1-T5)</label>
+                <select name="speed" id="speed" required>
+                    <option value="T1">T1 - En yavaş</option>
+                    <option value="T2">T2</option>
+                    <option value="T3">T3</option>
+                    <option value="T4" selected>T4 - Önerilen</option>
+                    <option value="T5">T5 - En hızlı</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ports">Portlar</label>
+                <select name="ports" id="ports" onchange="toggleCustomPorts()">
+                    <option value="top" selected>En Yaygın 100</option>
+                    <option value="all">Tüm Portlar</option>
+                    <option value="custom">Özel</option>
+                </select>
+                <input type="text" name="custom_ports" id="custom_ports_input" placeholder="örn: 80,443,8080" style="display:none; margin-top: 5px;">
+            </div>
+
+            <div class="form-group">
+                <label>
+                <input type="checkbox" name="os_detect"> İşletim Sistemi Tespiti (-O)
+                </label>
+
+                <br>
+                <label>
+                    <input type="checkbox" name="script_scan"> Script Taraması (-sC)
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn">🚀 Taramayı Başlat</button>
+        </form>
     </div>
+</div>
+
+
 
     <!-- Özel Tarama Modalı -->
     <div id="customScanModal" class="modal">

@@ -15,9 +15,9 @@ def overview():
     critical_vulns = mongo.db.vulnerabilities.count_documents({"severity": "critical"})
 
     # Get all data for the dashboard
-    goals = list(mongo.db.goals.find())
-    scans = list(mongo.db.scans.find())
-    vulnerabilities = list(mongo.db.vulnerabilities.find())
+    goals = list(mongo.db.goals.find().sort("timestamp", -1))
+    scans = list(mongo.db.scans.find().sort("timestamp", -1))
+    vulnerabilities = list(mongo.db.vulnerabilities.find().sort("timestamp", -1))
 
     # 🔧 ID'leri string'e çevir (Silme işlemi için şart)
     for goal in goals:

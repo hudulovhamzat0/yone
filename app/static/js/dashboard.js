@@ -172,6 +172,50 @@ function refreshStats() {
             console.error('Error refreshing stats:', error);
         });
 }
+document.addEventListener("DOMContentLoaded", function() {
+  const severityFilter = document.getElementById("severityFilter");
+  const listItems = document.querySelectorAll(".list-item");
+
+  severityFilter.addEventListener("change", function() {
+    const selected = this.value;
+
+    listItems.forEach(item => {
+      const itemSeverity = item.dataset.severity;
+      if (selected === "all" || itemSeverity === selected) {
+        item.style.display = "";
+      } else {
+        item.style.display = "none";
+      }
+    });
+  });
+});
+
+function toggleResolved(vulnId, isChecked) {
+    fetch('/vuln/update-status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id: vulnId,
+            resolved: isChecked
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Sunucu hatası');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Durum güncellendi:', data);
+    })
+    .catch(error => {
+        console.error('Hata oluştu:', error);
+        alert('Güncelleme başarısız oldu.');
+    });
+}
+
 
 // Refresh stats every 30 seconds
 setInterval(refreshStats, 30000);

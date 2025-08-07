@@ -25,6 +25,7 @@ def create_app():
     from .blueprints.scans import scans_bp
     from .blueprints.terminal import terminal_bp
     from .blueprints.api import api_bp
+    from .blueprints.vuln import vuln_bp   # <- EKLEDİK
 
     app.register_blueprint(auth_bp, url_prefix='/')
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
@@ -32,5 +33,6 @@ def create_app():
     app.register_blueprint(scans_bp, url_prefix='/scans')
     app.register_blueprint(terminal_bp, url_prefix='/terminal')
     app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(vuln_bp, url_prefix='/vuln')  # <- EKLEDİK
 
     return app

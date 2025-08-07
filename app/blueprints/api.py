@@ -13,21 +13,21 @@ def get_vulnerabilities():
     if severity:
         query["severity"] = severity
 
-    data = list(mongo.db.vulnerabilities.find(query, {"_id": 0}))
+    data = list(mongo.db.vulnerabilities.find(query, {"_id": 0}).sort("timestamp", -1))
     return jsonify(data)
 
 @api_bp.route("/scans")
 @login_required
 def get_scans():
     """Get all scans"""
-    data = list(mongo.db.scans.find({}, {"_id": 0}))
+    data = list(mongo.db.scans.find({}, {"_id": 0}).sort("timestamp", -1))
     return jsonify(data)
 
 @api_bp.route("/goals")
 @login_required
 def get_goals():
     """Get all goals/targets"""
-    data = list(mongo.db.goals.find({}, {"_id": 0}))
+    data = list(mongo.db.goals.find({}, {"_id": 0}).sort("timestamp", -1))
     return jsonify(data)
 
 @api_bp.route("/stats")

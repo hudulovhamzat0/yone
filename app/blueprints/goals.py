@@ -31,7 +31,7 @@ def add_goal():
 @login_required
 def list_goals():
     """API endpoint to get all goals"""
-    goals = list(mongo.db.goals.find({}, {"_id": 0}))
+    goals = list(mongo.db.goals.find({}, {"_id": 0}).sort("timestamp", -1))
     return jsonify(goals)
 
 

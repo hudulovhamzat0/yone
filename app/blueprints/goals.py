@@ -35,20 +35,36 @@ def list_goals():
     return jsonify(goals)
 
 
-# 📌 Hedef Silme
+# 📌 Hedef Silme + Açık + Scan Silme
 @goals_bp.route("/delete/<goal_id>", methods=["POST"])
 @login_required
 def delete_goal(goal_id):
-    """Delete a specific goal"""
+    """Delete a specific goal and its related vulnerabilities and scans"""
     try:
-        result = mongo.db.goals.delete_one({"_id": ObjectId(goal_id)})
-        if result.deleted_count:
-            flash("Hedef başarıyla silindi.", "success")
+        # Hedefi bul
+        goal = mongo.db.goals.find_one({"_id": ObjectId(goal_id)})
+        if goal:
+            ip = goal.get("ip")
+
+            # İlgili açıkları sil (description domain'e eşit)
+            mongo.db.vulnerabilities.delete_many({"description": ip})
+
+            # İlgili scan sonuçlarını sil (ip eşleşmesi)
+            mongo.db.scans.delete_many({"ip": ip})
+
+            # Hedefi sil
+            result = mongo.db.goals.delete_one({"_id": ObjectId(goal_id)})
+
+            if result.deleted_count:
+                flash("Hedef, açıklar ve scan verileri başarıyla silindi.", "success")
+            else:
+                flash("Hedef silinemedi.", "danger")
         else:
-            flash("Hedef bulunamadı.", "danger")
+            flash("Hedef bulunamadı.", "warning")
+
     except Exception as e:
         flash(f"Geçersiz hedef ID: {e}", "danger")
-    
+
     return redirect(url_for("dashboard.overview"))
 
 
@@ -60,23 +76,33 @@ def update_goal(goal_id):
     try:
         status = request.form.get("status")
         note = request.form.get("note")
-        
+
         update_data = {}
         if status:
             update_data["status"] = status
         if note:
             update_data["note"] = note
-            
+
         result = mongo.db.goals.update_one(
-            {"_id": ObjectId(goal_id)}, 
+            {"_id": ObjectId(goal_id)},
             {"$set": update_data}
         )
-        
+
         if result.modified_count:
             flash("Hedef başarıyla güncellendi.", "success")
         else:
             flash("Güncellenecek veri bulunamadı.", "info")
     except Exception as e:
         flash(f"Geçersiz hedef ID: {e}", "danger")
+
+    return redirect(url_for("dashboard.overview"))
+@goals_bp.route("/clear-scans", methods=["POST"])
+@login_required
+def clear_scans():
+    try:
+        result = mongo.db.scans.delete_many({})
+        flash(f"{result.deleted_count} scan geçmişi silindi.", "success")
+    except Exception as e:
+        flash(f"Scan geçmişi silinemedi: {e}", "danger")
     
     return redirect(url_for("dashboard.overview"))

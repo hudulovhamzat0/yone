@@ -32,7 +32,7 @@ def start_nmap():
             if "/tcp" in line and ("open" in line or "filtered" in line):
                 mongo.db.vulnerabilities.insert_one({
                     "title": f"Açık Port: {line.strip()}",
-                    "description": f"Nmap çıktısı: {line.strip()}",
+                    "description": ip,
                     "severity": "low",
                     "timestamp": datetime.datetime.utcnow()
                 })
@@ -60,7 +60,7 @@ def start_nmap():
 @login_required
 def list_scans():
     """API endpoint to get all scans"""
-    scans = list(mongo.db.scans.find({}, {"_id": 0}))
+    scans = list(mongo.db.scans.find().sort("created_at", -1))
     return jsonify(scans)
 
 @scans_bp.route("/start-custom", methods=["POST"])

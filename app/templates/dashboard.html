@@ -176,15 +176,26 @@
                     <p>Tüm ağ altyapısının kapsamlı güvenlik denetimi ve risk analizi.</p>
                 </div>
             </div>
-            <div class="list-container">
-                {% for scan in scans %}
-                <div class="list-item">
-                    <h4>{{ scan.name }}</h4>
-                    <p>{{ scan.description if scan.description else "Açıklama yok" }}</p>
-                    <span class="status {{ scan.status }}">{{ scan.status|capitalize }}</span>
+            <!-- Scan geçmişini temizleme butonu -->
+                <div class="d-flex justify-content-end mb-3">
+                    <form action="{{ url_for('goals.clear_scans') }}" method="POST" onsubmit="return confirm('Tüm scan geçmişini silmek istediğine emin misin?');">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Scan Geçmişini Temizle
+                        </button>
+                    </form>
                 </div>
-                {% endfor %}
-            </div>
+                <br><br>
+                <!-- Scan listesi -->
+                <div class="list-container">
+                    {% for scan in scans %}
+                    <div class="list-item">
+                        <h4>{{ scan.name }}</h4>
+                        <p>{{ scan.description if scan.description else "Açıklama yok" }}</p>
+                        <span class="status {{ scan.status }}">{{ scan.status|capitalize }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
         </section>
         
         <section id="terminal" class="content-section">

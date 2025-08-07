@@ -19,6 +19,14 @@ def overview():
     scans = list(mongo.db.scans.find())
     vulnerabilities = list(mongo.db.vulnerabilities.find())
 
+    # 🔧 ID'leri string'e çevir (Silme işlemi için şart)
+    for goal in goals:
+        goal["_id"] = str(goal["_id"])
+    for scan in scans:
+        scan["_id"] = str(scan["_id"])
+    for vuln in vulnerabilities:
+        vuln["_id"] = str(vuln["_id"])
+
     # Read terminal output
     terminal_output = "Henüz çıktı yok..."
     if os.path.exists("terminal.txt"):

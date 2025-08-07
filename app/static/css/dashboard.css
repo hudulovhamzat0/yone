@@ -456,6 +456,7 @@ body::before {
 }
 
 /* List Items - Shadow Blade Style */
+/* List Items - Shadow Blade Style */
 .list-container {
     background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 0, 0, 0.9) 100%);
     backdrop-filter: blur(20px);
@@ -476,6 +477,7 @@ body::before {
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
     overflow: hidden;
+    z-index: 1; /* 🔥 İçeriği üstte tut */
 }
 
 .list-item::before {
@@ -487,6 +489,7 @@ body::before {
     width: 0;
     background: linear-gradient(90deg, rgba(255, 0, 0, 0.1), transparent);
     transition: width 0.4s ease;
+    z-index: 0; /* ✅ Bu katman arkada */
 }
 
 .list-item:hover::before {
@@ -525,6 +528,29 @@ body::before {
     margin-top: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* ✅ Sil Butonu Stili */
+.list-item form {
+    margin-top: 15px;
+}
+
+.list-item button {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background-color: #ff3333;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+    z-index: 2; /* 💯 Her şeyin üstünde */
+}
+
+.list-item button:hover {
+    background-color: #cc0000;
 }
 
 .status.active { 
@@ -611,4 +637,37 @@ body::before {
     float: right;
     font-size: 24px;
     cursor: pointer;
+}
+.btn {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+}
+
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-danger:active {
+    background-color: #bd2130;
+}
+.button-group {
+    display: flex;
+    gap: 8px;
 }

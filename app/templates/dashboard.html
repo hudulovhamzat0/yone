@@ -6,6 +6,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Security Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        /* Modal optimizations */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: #f44336;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        
+        /* Card hover effects */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+    </style>
 </head>
 
 <body>
@@ -189,10 +256,10 @@
                     <p>Start a quick Nmap scan to detect open ports on target systems.</p>
                 </div>
 
-                <div class="card" id="custom-scan-trigger">
+                <div class="card" id="gobuster-scan-trigger">
                     <span class="card-icon">🎯</span>
-                    <h3>Custom Scan</h3>
-                    <p>Detailed security analysis and vulnerability scan focused on specific services.</p>
+                    <h3>Gobuster DIR Scan</h3>
+                    <p>Find vulnerable directories and files on web servers.</p>
                 </div>
                 
                 <div class="card">
@@ -255,12 +322,12 @@
     <!-- Nmap Scan Modal -->
     <div id="nmapModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="closeModal('nmapModal')">&times;</span>
             <h2>🔍 Custom Nmap Scan</h2>
             <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
                 <div class="form-group">
-                    <label for="target">Select Target</label>
-                    <select name="target" id="target" required>
+                    <label for="nmap-target">Select Target</label>
+                    <select name="target" id="nmap-target" required>
                         {% for goal in goals %}
                             <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
                         {% endfor %}
@@ -313,26 +380,56 @@
         </div>
     </div>
 
-    <!-- Custom Scan Modal -->
-    <div id="customScanModal" class="modal">
+    <!-- Gobuster Scan Modal (Düzeltildi!) -->
+    <div id="gobusterModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeCustomScanModal()">&times;</span>
-            <h2>🎯 Custom Scan</h2>
-            <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
+            <span class="close-btn" onclick="closeModal('gobusterModal')">&times;</span>
+            <h2>🎯 Custom Gobuster Scan</h2>
+            <form action="{{ url_for('gobuster.gobuster') }}" method="POST">
                 <div class="form-group">
-                    <label for="custom_target">Target</label>
-                    <input type="text" name="target" id="custom_target" required placeholder="192.168.1.1 or domain.com">
-                </div>
-                <div class="form-group">
-                    <label for="custom_scan_type">Scan Type</label>
-                    <select name="scan_type" id="custom_scan_type" required style="width: 100%; padding: 10px; border-radius: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
-                        <option value="basic">Basic Scan</option>
-                        <option value="aggressive">Aggressive Scan</option>
-                        <option value="stealth">Stealth Scan</option>
-                        <option value="udp">UDP Scan</option>
+                    <label for="gobuster-target">Select Target URL</label>
+                    <select name="target" id="gobuster-target" required>
+                        {% for goal in goals %}
+                            <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
+                        {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="submit-btn">🚀 Start Custom Scan</button>
+
+                <div class="form-group">
+                    <label for="wordlist">Wordlist</label>
+                    <select name="wordlist" id="wordlist" required>
+                        <option value="wordlist.txt" selected>Default Wordlist</option>
+                        <option value="common.txt">Common Directories</option>
+                        <option value="small.txt">Small Wordlist (Fast)</option>
+                        <option value="big.txt">Big Wordlist (Thorough)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="threads">Threads (Concurrency)</label>
+                    <select name="threads" id="threads">
+                        <option value="10" selected>10 (Recommended)</option>
+                        <option value="20">20 (Faster)</option>
+                        <option value="50">50 (Aggressive)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="extensions">File Extensions</label>
+                    <input type="text" name="extensions" id="extensions" placeholder="php,html,txt,js" value="php,html,txt">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="follow_redirects" checked> Follow Redirects
+                    </label>
+                    <br>
+                    <label>
+                        <input type="checkbox" name="show_length"> Show Content Length
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">🚀 Start Gobuster Scan</button>
             </form>
         </div>
     </div>
@@ -340,8 +437,40 @@
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+    // Modal management class for better organization
+    class ModalManager {
+        static openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden"; // Prevent background scrolling
+            }
+        }
+        
+        static closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Restore scrolling
+            }
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         // Load vulnerability chart
+        loadVulnerabilityChart();
+        
+        // Initialize modal handlers
+        initializeModals();
+        
+        // Initialize filters
+        initializeFilters();
+        
+        // Initialize terminal
+        initializeTerminal();
+    });
+
+    function loadVulnerabilityChart() {
         fetch("/api/vulnerabilities")
             .then(res => res.json())
             .then(data => {
@@ -371,47 +500,71 @@
                         }
                     }
                 });
-            });
+            })
+            .catch(err => console.error('Error loading vulnerability chart:', err));
+    }
 
-        // Modal handlers
-        const nmapModal = document.getElementById("nmapModal");
-        const customScanModal = document.getElementById("customScanModal");
+    function initializeModals() {
+        // Modal triggers
         const nmapTrigger = document.getElementById("nmap-scan-trigger");
-        const customTrigger = document.getElementById("custom-scan-trigger");
+        const gobusterTrigger = document.getElementById("gobuster-scan-trigger");
 
-        if (nmapTrigger && nmapModal) {
-            nmapTrigger.addEventListener("click", function () {
-                nmapModal.style.display = "block";
-            });
+        if (nmapTrigger) {
+            nmapTrigger.addEventListener("click", () => ModalManager.openModal("nmapModal"));
         }
 
-        if (customTrigger && customScanModal) {
-            customTrigger.addEventListener("click", function () {
-                customScanModal.style.display = "block";
-            });
+        if (gobusterTrigger) {
+            gobusterTrigger.addEventListener("click", () => ModalManager.openModal("gobusterModal"));
         }
 
         // Close modals when clicking outside
         window.addEventListener("click", function (e) {
-            if (e.target === nmapModal) {
-                nmapModal.style.display = "none";
-            }
-            if (e.target === customScanModal) {
-                customScanModal.style.display = "none";
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = "none";
+                document.body.style.overflow = "auto";
             }
         });
-    });
 
-    // Vulnerability filtering
+        // ESC key to close modals
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal[style*="block"]');
+                openModals.forEach(modal => {
+                    modal.style.display = "none";
+                    document.body.style.overflow = "auto";
+                });
+            }
+        });
+    }
+
+    function initializeFilters() {
+        document.getElementById("severityFilter").addEventListener("change", () => {
+            filterByStatus(currentStatus);
+        });
+    }
+
+    function initializeTerminal() {
+        // Load terminal output when switching to terminal tab
+        const terminalNavItem = document.querySelector('[data-section="terminal"]');
+        if (terminalNavItem) {
+            terminalNavItem.addEventListener("click", loadTerminalOutput);
+        }
+        
+        // Auto-refresh terminal output every 5 seconds when terminal tab is active
+        setInterval(() => {
+            const terminalSection = document.getElementById("terminal");
+            if (terminalSection && terminalSection.classList.contains("active")) {
+                loadTerminalOutput();
+            }
+        }, 5000);
+    }
+
+    // Vulnerability filtering (optimized)
     let currentStatus = "all";
-
-    document.getElementById("severityFilter").addEventListener("change", () => {
-        filterByStatus(currentStatus);
-    });
 
     function filterByStatus(status) {
         currentStatus = status;
-        const items = document.querySelectorAll(".list-item");
+        const items = document.querySelectorAll("#vulnerabilities .list-item");
         const selectedSeverity = document.getElementById("severityFilter").value;
 
         items.forEach(item => {
@@ -425,13 +578,9 @@
         });
     }
 
-    // Modal functions
-    function closeModal() {
-        document.getElementById("nmapModal").style.display = "none";
-    }
-
-    function closeCustomScanModal() {
-        document.getElementById("customScanModal").style.display = "none";
+    // Improved modal functions
+    function closeModal(modalId) {
+        ModalManager.closeModal(modalId);
     }
 
     function toggleCustomPorts() {
@@ -447,28 +596,49 @@
         }
     }
 
-    // Terminal functions
+    // Terminal functions (optimized with error handling)
     function loadTerminalOutput() {
         fetch("/terminal/output")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("terminal-content").textContent = data.output;
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
             })
-            .catch(err => console.error('Error loading terminal output:', err));
+            .then(data => {
+                const terminalContent = document.getElementById("terminal-content");
+                if (terminalContent) {
+                    terminalContent.textContent = data.output || "No output available...";
+                }
+            })
+            .catch(err => {
+                console.error('Error loading terminal output:', err);
+                const terminalContent = document.getElementById("terminal-content");
+                if (terminalContent) {
+                    terminalContent.textContent = "Error loading terminal output...";
+                }
+            });
     }
 
     function clearTerminal() {
         fetch("/terminal/clear", { method: "POST" })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            })
             .then(data => {
                 if (data.success) {
-                    document.getElementById("terminal-content").textContent = "Terminal cleared...";
+                    const terminalContent = document.getElementById("terminal-content");
+                    if (terminalContent) {
+                        terminalContent.textContent = "Terminal cleared...";
+                    }
                 }
             })
-            .catch(err => console.error('Error clearing terminal:', err));
+            .catch(err => {
+                console.error('Error clearing terminal:', err);
+                alert('Failed to clear terminal');
+            });
     }
 
-    // Toggle vulnerability resolved status
+    // Toggle vulnerability resolved status (with better error handling)
     function toggleResolved(vulnId, isResolved) {
         fetch(`/api/vulnerabilities/${vulnId}/toggle`, {
             method: 'POST',
@@ -477,25 +647,62 @@
             },
             body: JSON.stringify({ resolved: isResolved })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                location.reload(); // Refresh to update the UI
+                // Instead of full page reload, update the specific item
+                const vulnItem = document.querySelector(`[data-status] input[onchange*="${vulnId}"]`).closest('.list-item');
+                if (vulnItem) {
+                    vulnItem.dataset.status = isResolved ? 'resolved' : 'unresolved';
+                    const statusSpan = vulnItem.querySelector('.status');
+                    if (statusSpan) {
+                        statusSpan.textContent = statusSpan.textContent.replace(
+                            isResolved ? 'Unresolved' : 'Resolved',
+                            isResolved ? 'Resolved' : 'Unresolved'
+                        );
+                    }
+                }
+                // Refresh the current filter
+                filterByStatus(currentStatus);
             }
         })
-        .catch(err => console.error('Error toggling vulnerability status:', err));
+        .catch(err => {
+            console.error('Error toggling vulnerability status:', err);
+            alert('Failed to update vulnerability status');
+            // Revert checkbox state on error
+            const checkbox = document.querySelector(`input[onchange*="${vulnId}"]`);
+            if (checkbox) checkbox.checked = !isResolved;
+        });
     }
 
-    // Auto-refresh terminal output every 5 seconds when terminal tab is active
-    setInterval(() => {
-        const terminalSection = document.getElementById("terminal");
-        if (terminalSection && terminalSection.classList.contains("active")) {
-            loadTerminalOutput();
-        }
-    }, 5000);
+    // Performance optimization: Debounced scroll handler for large lists
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
 
-    // Load terminal output when switching to terminal tab
-    document.querySelector('[data-section="terminal"]').addEventListener("click", loadTerminalOutput);
+    // Add loading states for better UX
+    function showLoading(element) {
+        const originalText = element.textContent;
+        element.textContent = "Loading...";
+        element.disabled = true;
+        return originalText;
+    }
+
+    function hideLoading(element, originalText) {
+        element.textContent = originalText;
+        element.disabled = false;
+    }
     </script>
 </body>
 

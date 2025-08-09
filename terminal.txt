@@ -1,8 +1,340 @@
-app
-config.py
-create_db.py
-hudul.json
-README.md
-requirements.txt
-run.py
-terminal.txt
+===============================================================
+Gobuster v3.5
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:               http://nmap.org
+[+] Method:            GET
+[+] Threads:           10
+[+] Wordlist:          wordlists/wordlist.txt
+[+] Status codes:      401,403,200,204,301,302,307
+[+] User Agent:        gobuster/3.5
+[+] Extensions:        php,html,txt
+[+] Follow Redirect:   true
+[+] Timeout:           30s
+===============================================================
+2025/08/09 22:56:39 Starting gobuster in directory enumeration mode
+===============================================================
+
+[2KProgress: 10 / 288 (3.47%)
+[2KProgress: 12 / 288 (4.17%)
+[2KProgress: 21 / 288 (7.29%)
+[2KProgress: 33 / 288 (11.46%)
+[2K/data                 (Status: 200) [Size: 8039]
+
+[2KProgress: 43 / 288 (14.93%)
+[2KProgress: 53 / 288 (18.40%)
+[2K/images               (Status: 200) [Size: 37983]
+
+[2K/js                   (Status: 200) [Size: 7756]
+
+[2KProgress: 66 / 288 (22.92%)
+[2K/css                  (Status: 200) [Size: 9916]
+
+[2KProgress: 75 / 288 (26.04%)
+[2K/download.html        (Status: 200) [Size: 17110]
+
+[2K/download             (Status: 200) [Size: 17110]
+
+[2K/docs.html            (Status: 200) [Size: 23899]
+
+[2KProgress: 87 / 288 (30.21%)
+[2K/docs                 (Status: 200) [Size: 7523]
+
+[2KProgress: 101 / 288 (35.07%)
+[2KProgress: 112 / 288 (38.89%)
+[2KProgress: 123 / 288 (42.71%)
+[2KProgress: 134 / 288 (46.53%)
+[2KProgress: 144 / 288 (50.00%)
+[2KProgress: 159 / 288 (55.21%)
+[2KProgress: 172 / 288 (59.72%)
+[2KProgress: 182 / 288 (63.19%)
+[2KProgress: 193 / 288 (67.01%)
+[2KProgress: 204 / 288 (70.83%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)
+[2KProgress: 208 / 288 (72.22%)[ERROR] 2025/08/09 22:57:20 [!] Get "https://nmap.org/accounts.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "https://nmap.org/accounts.txt": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "https://nmap.org/profile": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "https://nmap.org/profile.php": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "https://nmap.org/profile.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "http://nmap.org/settings": dial tcp 50.116.1.184:80: connect: connection refused
+[ERROR] 2025/08/09 22:57:20 [!] Get "http://nmap.org/profile.txt": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+[2KProgress: 215 / 288 (74.65%)[ERROR] 2025/08/09 22:57:20 [!] Get "http://nmap.org/profiles": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "http://nmap.org/profiles.php": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "http://nmap.org/profiles.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:20 [!] Get "http://nmap.org/profiles.txt": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+[2KProgress: 219 / 288 (76.04%)[ERROR] 2025/08/09 22:57:21 [!] Get "http://nmap.org/settings.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 220 / 288 (76.39%)
+[2KProgress: 220 / 288 (76.39%)
+[2KProgress: 220 / 288 (76.39%)[ERROR] 2025/08/09 22:57:22 [!] Get "http://nmap.org/configuration.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 221 / 288 (76.74%)
+[2KProgress: 221 / 288 (76.74%)[ERROR] 2025/08/09 22:57:23 [!] Get "http://nmap.org/settings.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 222 / 288 (77.08%)
+[2KProgress: 222 / 288 (77.08%)[ERROR] 2025/08/09 22:57:24 [!] Get "http://nmap.org/setup.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 223 / 288 (77.43%)
+[2KProgress: 223 / 288 (77.43%)[ERROR] 2025/08/09 22:57:26 [!] Get "http://nmap.org/setup": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 224 / 288 (77.78%)
+[2KProgress: 224 / 288 (77.78%)
+[2KProgress: 224 / 288 (77.78%)[ERROR] 2025/08/09 22:57:27 [!] Get "http://nmap.org/setup.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 225 / 288 (78.12%)[ERROR] 2025/08/09 22:57:27 [!] Get "http://nmap.org/settings.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 226 / 288 (78.47%)[ERROR] 2025/08/09 22:57:28 [!] Get "http://nmap.org/install": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 227 / 288 (78.82%)
+[2KProgress: 227 / 288 (78.82%)
+[2KProgress: 227 / 288 (78.82%)[ERROR] 2025/08/09 22:57:29 [!] Get "http://nmap.org/install.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 228 / 288 (79.17%)
+[2KProgress: 228 / 288 (79.17%)[ERROR] 2025/08/09 22:57:31 [!] Get "http://nmap.org/install.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 229 / 288 (79.51%)
+[2KProgress: 229 / 288 (79.51%)
+[2KProgress: 229 / 288 (79.51%)[ERROR] 2025/08/09 22:57:32 [!] Get "http://nmap.org/installation": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 230 / 288 (79.86%)
+[2KProgress: 230 / 288 (79.86%)[ERROR] 2025/08/09 22:57:33 [!] Get "http://nmap.org/installation.txt": dial tcp 50.116.1.184:80: connect: connection refused
+[ERROR] 2025/08/09 22:57:33 [!] Get "http://nmap.org/installation.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 232 / 288 (80.56%)
+[2KProgress: 232 / 288 (80.56%)
+[2KProgress: 232 / 288 (80.56%)[ERROR] 2025/08/09 22:57:34 [!] Get "http://nmap.org/installation.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 233 / 288 (80.90%)
+[2KProgress: 233 / 288 (80.90%)[ERROR] 2025/08/09 22:57:36 [!] Get "http://nmap.org/update": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 234 / 288 (81.25%)
+[2KProgress: 234 / 288 (81.25%)
+[2KProgress: 234 / 288 (81.25%)[ERROR] 2025/08/09 22:57:37 [!] Get "http://nmap.org/update.php": dial tcp 50.116.1.184:80: connect: connection refused
+[ERROR] 2025/08/09 22:57:37 [!] Get "http://nmap.org/update.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 236 / 288 (81.94%)
+[2KProgress: 236 / 288 (81.94%)
+[2KProgress: 236 / 288 (81.94%)[ERROR] 2025/08/09 22:57:38 [!] Get "http://nmap.org/update.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 237 / 288 (82.29%)
+[2KProgress: 237 / 288 (82.29%)[ERROR] 2025/08/09 22:57:40 [!] Get "http://nmap.org/upgrade": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 238 / 288 (82.64%)[ERROR] 2025/08/09 22:57:40 [!] Get "http://nmap.org/setup.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 239 / 288 (82.99%)
+[2KProgress: 239 / 288 (82.99%)
+[2KProgress: 239 / 288 (82.99%)[ERROR] 2025/08/09 22:57:41 [!] Get "http://nmap.org/upgrade.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 240 / 288 (83.33%)
+[2KProgress: 240 / 288 (83.33%)[ERROR] 2025/08/09 22:57:43 [!] Get "http://nmap.org/upgrade.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 241 / 288 (83.68%)
+[2KProgress: 241 / 288 (83.68%)
+[2KProgress: 241 / 288 (83.68%)[ERROR] 2025/08/09 22:57:44 [!] Get "http://nmap.org/maintenance": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)
+[2KProgress: 242 / 288 (84.03%)[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/config": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/config.php": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/config.html": dial tcp 50.116.1.184:80: i/o timeout (Client.Timeout exceeded while awaiting headers)
+
+[2KProgress: 245 / 288 (85.07%)[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/config.txt": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/configuration": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/configuration.php": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/configuration.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:50 [!] Get "http://nmap.org/maintenance.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 250 / 288 (86.81%)
+[2KProgress: 250 / 288 (86.81%)
+[2KProgress: 250 / 288 (86.81%)
+[2KProgress: 250 / 288 (86.81%)
+[2KProgress: 250 / 288 (86.81%)
+[2KProgress: 250 / 288 (86.81%)[ERROR] 2025/08/09 22:57:53 [!] Get "http://nmap.org/dev": dial tcp 50.116.1.184:80: connect: connection refused
+[ERROR] 2025/08/09 22:57:53 [!] Get "http://nmap.org/maintenance.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 252 / 288 (87.50%)
+[2KProgress: 252 / 288 (87.50%)[ERROR] 2025/08/09 22:57:55 [!] Get "http://nmap.org/development.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 253 / 288 (87.85%)
+[2KProgress: 253 / 288 (87.85%)
+[2KProgress: 253 / 288 (87.85%)[ERROR] 2025/08/09 22:57:56 [!] Get "http://nmap.org/staging": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 254 / 288 (88.19%)[ERROR] 2025/08/09 22:57:57 [!] Get "http://nmap.org/development.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 255 / 288 (88.54%)
+[2KProgress: 255 / 288 (88.54%)[ERROR] 2025/08/09 22:57:57 [!] Get "http://nmap.org/install.php": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:57:58 [!] Get "http://nmap.org/dev.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 257 / 288 (89.24%)
+[2KProgress: 257 / 288 (89.24%)[ERROR] 2025/08/09 22:57:59 [!] Get "http://nmap.org/staging.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 258 / 288 (89.58%)
+[2KProgress: 258 / 288 (89.58%)[ERROR] 2025/08/09 22:57:59 [!] Get "http://nmap.org/maintenance.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 259 / 288 (89.93%)
+[2KProgress: 259 / 288 (89.93%)[ERROR] 2025/08/09 22:58:01 [!] Get "http://nmap.org/production.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 260 / 288 (90.28%)
+[2KProgress: 260 / 288 (90.28%)
+[2KProgress: 260 / 288 (90.28%)[ERROR] 2025/08/09 22:58:02 [!] Get "http://nmap.org/production.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 261 / 288 (90.62%)
+[2KProgress: 261 / 288 (90.62%)[ERROR] 2025/08/09 22:58:03 [!] Get "http://nmap.org/beta": dial tcp 50.116.1.184:80: connect: connection refused
+[ERROR] 2025/08/09 22:58:03 [!] Get "http://nmap.org/staging.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 263 / 288 (91.32%)
+[2KProgress: 263 / 288 (91.32%)
+[2KProgress: 263 / 288 (91.32%)[ERROR] 2025/08/09 22:58:04 [!] Get "http://nmap.org/beta.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 264 / 288 (91.67%)
+[2KProgress: 264 / 288 (91.67%)[ERROR] 2025/08/09 22:58:05 [!] Get "http://nmap.org/beta.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 265 / 288 (92.01%)
+[2KProgress: 265 / 288 (92.01%)[ERROR] 2025/08/09 22:58:06 [!] Get "http://nmap.org/beta.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 266 / 288 (92.36%)
+[2KProgress: 266 / 288 (92.36%)[ERROR] 2025/08/09 22:58:08 [!] Get "http://nmap.org/alpha.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 267 / 288 (92.71%)
+[2KProgress: 267 / 288 (92.71%)[ERROR] 2025/08/09 22:58:09 [!] Get "http://nmap.org/alpha": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 268 / 288 (93.06%)
+[2KProgress: 268 / 288 (93.06%)[ERROR] 2025/08/09 22:58:10 [!] Get "http://nmap.org/upgrade.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+[2KProgress: 269 / 288 (93.40%)[ERROR] 2025/08/09 22:58:10 [!] Get "http://nmap.org/private": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 270 / 288 (93.75%)
+[2KProgress: 270 / 288 (93.75%)[ERROR] 2025/08/09 22:58:11 [!] Get "http://nmap.org/alpha.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 271 / 288 (94.10%)
+[2KProgress: 271 / 288 (94.10%)[ERROR] 2025/08/09 22:58:12 [!] Get "http://nmap.org/alpha.txt": dial tcp 50.116.1.184:80: connect: connection refused
+[ERROR] 2025/08/09 22:58:12 [!] Get "http://nmap.org/private.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 273 / 288 (94.79%)
+[2KProgress: 273 / 288 (94.79%)[ERROR] 2025/08/09 22:58:13 [!] Get "http://nmap.org/private.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 274 / 288 (95.14%)
+[2KProgress: 274 / 288 (95.14%)[ERROR] 2025/08/09 22:58:14 [!] Get "http://nmap.org/production.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 275 / 288 (95.49%)
+[2KProgress: 275 / 288 (95.49%)
+[2KProgress: 275 / 288 (95.49%)[ERROR] 2025/08/09 22:58:15 [!] Get "http://nmap.org/public": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 276 / 288 (95.83%)
+[2KProgress: 276 / 288 (95.83%)[ERROR] 2025/08/09 22:58:16 [!] Get "http://nmap.org/public.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 277 / 288 (96.18%)
+[2KProgress: 277 / 288 (96.18%)[ERROR] 2025/08/09 22:58:17 [!] Get "http://nmap.org/private.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 278 / 288 (96.53%)
+[2KProgress: 278 / 288 (96.53%)[ERROR] 2025/08/09 22:58:18 [!] Get "http://nmap.org/secure.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 279 / 288 (96.88%)
+[2KProgress: 279 / 288 (96.88%)[ERROR] 2025/08/09 22:58:20 [!] Get "http://nmap.org/secure": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 280 / 288 (97.22%)
+[2KProgress: 280 / 288 (97.22%)[ERROR] 2025/08/09 22:58:20 [!] Get "http://nmap.org/dev.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:58:20 [!] Get "http://nmap.org/dev.txt": dial tcp 50.116.1.184:80: i/o timeout (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:58:20 [!] Get "http://nmap.org/development": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:58:20 [!] Get "http://nmap.org/development.php": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+[ERROR] 2025/08/09 22:58:20 [!] Get "http://nmap.org/security": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:22 [!] Get "http://nmap.org/security.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:23 [!] Get "http://nmap.org/public.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:24 [!] Get "http://nmap.org/security.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:26 [!] Get "http://nmap.org/secure.html": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:27 [!] Get "http://nmap.org/staging.html": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:27 [!] Get "http://nmap.org/secure.txt": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:28 [!] Get "http://nmap.org/production": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+[2KProgress: 284 / 288 (98.61%)[ERROR] 2025/08/09 22:58:28 [!] Get "http://nmap.org/security.php": dial tcp 50.116.1.184:80: connect: connection refused
+
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)
+[2KProgress: 284 / 288 (98.61%)
+[ERROR] 2025/08/09 22:58:30 [!] Get "http://nmap.org/public.html": dial tcp 50.116.1.184:80: connect: connection refused
+===============================================================
+2025/08/09 22:58:30 Finished
+===============================================================

@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
             new Chart(ctx, {
                 type: "doughnut",
                 data: {
-                    labels: ["Kritik", "Yüksek", "Orta", "Düşük"],
+                    labels: ["Critical", "High", "Medium", "Low"],
                     datasets: [{
                         data: [counts.critical, counts.high, counts.medium, counts.low],
                         backgroundColor: ["#f44336", "#FF9800", "#FFC107", "#4CAF50"]

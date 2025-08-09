@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Security Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 
@@ -13,19 +13,19 @@
     <nav class="sidebar">
         <div class="nav-item active" data-section="overview">
             <span class="nav-icon">📊</span>
-            <span class="nav-text">Genel Bakış</span>
+            <span class="nav-text">Overview</span>
         </div>
-        <div class="nav-item" data-section="goals">
+        <div class="nav-item" data-section="targets">
             <span class="nav-icon">🎯</span>
-            <span class="nav-text">Hedefler</span>
+            <span class="nav-text">Targets</span>
         </div>
         <div class="nav-item" data-section="vulnerabilities">
             <span class="nav-icon">🔐</span>
-            <span class="nav-text">Açıklar</span>
+            <span class="nav-text">Vulnerabilities</span>
         </div>
         <div class="nav-item" data-section="scans">
             <span class="nav-icon">🔍</span>
-            <span class="nav-text">Taramalar</span>
+            <span class="nav-text">Scans</span>
         </div>
         <div class="nav-item" data-section="terminal">
             <span class="nav-icon">💻</span>
@@ -33,56 +33,56 @@
         </div>
     </nav>
 
-    <!-- Ana İçerik -->
+    <!-- Main Content -->
     <main class="main-content">
-        <!-- Genel Bakış -->
+        <!-- Overview Section -->
         <section id="overview" class="content-section active">
             <div class="dashboard-header">
-                <h1>📊 Genel Bakış</h1>
-                <p>Sistem durumu ve genel istatistiklerin özeti</p>
+                <h1>📊 Dashboard Overview</h1>
+                <p>System status and general statistics summary</p>
             </div>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number">{{ total_goals }}</div>
-                    <div class="stat-label">Toplam Hedef</div>
+                    <div class="stat-label">Total Targets</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">{{ active_scans }}</div>
-                    <div class="stat-label">Aktif Tarama</div>
+                    <div class="stat-label">Active Scans</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">{{ found_vulns }}</div>
-                    <div class="stat-label">Bulunan Açık</div>
+                    <div class="stat-label">Found Vulnerabilities</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">{{ critical_vulns }}</div>
-                    <div class="stat-label">Kritik Seviye</div>
+                    <div class="stat-label">Critical Level</div>
                 </div>
             </div>
-            <!-- Açıklar Grafiği -->
+            <!-- Vulnerabilities Chart -->
             <div class="chart-container">
                 <canvas id="vulnChart"></canvas>
             </div>
         </section>
 
-        <!-- Hedefler -->
-        <section id="goals" class="content-section">
+        <!-- Targets Section -->
+        <section id="targets" class="content-section">
             <div class="dashboard-header">
-                <h1>🎯 Hedefler</h1>
-                <p>Tanımlanan hedefler ve durumları</p>
+                <h1>🎯 Target Management</h1>
+                <p>Defined targets and their status</p>
             </div>
             <div class="form-container">
-                <h2>🎯 Yeni Hedef Ekle</h2>
+                <h2>🎯 Add New Target</h2>
                 <form action="{{ url_for('goals.add_goal') }}" method="POST">
                     <div class="form-group">
-                        <label for="url">Hedef URL</label>
+                        <label for="url">Target URL</label>
                         <input type="text" name="url" id="url" required placeholder="https://example.com">
                     </div>
                     <div class="form-group">
-                        <label for="note">Not</label>
-                        <textarea name="note" id="note" placeholder="Bu hedef hakkında notlar..."></textarea>
+                        <label for="note">Notes</label>
+                        <textarea name="note" id="note" placeholder="Notes about this target..."></textarea>
                     </div>
-                    <button type="submit" class="submit-btn">➕ Oluştur</button>
+                    <button type="submit" class="submit-btn">➕ Create Target</button>
                 </form>
             </div>
 
@@ -93,21 +93,19 @@
                     <p>{{ goal.ip }}</p>
                     <span class="status {{ goal.status }}">{{ goal.status|capitalize }}</span>
                     <br><br>
-                    <!-- 🗑️ Sil Butonu -->
                     <form action="{{ url_for('goals.delete_goal', goal_id=goal._id) }}" method="POST">
-                        <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </div>
                 {% endfor %}
             </div>
-
         </section>
 
-        <!-- Açıklar -->
+        <!-- Vulnerabilities Section -->
         <section id="vulnerabilities" class="content-section">
             <div class="dashboard-header">
-                <h1>🔐 Güvenlik Açıkları</h1>
-                <p>Tespit edilen güvenlik açıkları ve riskleri</p>
+                <h1>🔐 Security Vulnerabilities</h1>
+                <p>Detected security vulnerabilities and risks</p>
             </div>
 
             <div class="stats-grid">
@@ -135,14 +133,14 @@
             </div>
 
             <div class="filter-buttons">
-                <button onclick="filterByStatus('all')">Tüm Açıklar</button>
-                <button onclick="filterByStatus('unresolved')">🕓 Bakılmayan</button>
-                <button onclick="filterByStatus('resolved')">✅ Düzeltilen</button>
+                <button onclick="filterByStatus('all')">All Vulnerabilities</button>
+                <button onclick="filterByStatus('unresolved')">🕓 Unresolved</button>
+                <button onclick="filterByStatus('resolved')">✅ Resolved</button>
             </div>
 
             <div class="filter-controls" style="margin-bottom: 1rem;">
                 <select id="severityFilter">
-                    <option value="all">Tüm Seviyeler</option>
+                    <option value="all">All Severity Levels</option>
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
@@ -151,219 +149,190 @@
             </div>
 
             <div class="list-container">
-            {% for vuln in vulnerabilities %}
+                {% for vuln in vulnerabilities %}
                 {% set color = {
-                'critical': '#f44336',
-                'high': '#FF9800',
-                'medium': '#FFC107',
-                'low': '#4CAF50'
+                    'critical': '#f44336',
+                    'high': '#FF9800',
+                    'medium': '#FFC107',
+                    'low': '#4CAF50'
                 }[vuln.severity] %}
                 
                 <div class="list-item" data-severity="{{ vuln.severity }}" data-status="{{ 'resolved' if vuln.resolved else 'unresolved' }}" style="border-left-color: {{ color }};">
-                <h4>{{ vuln.title }}</h4>
-                <p>{{ vuln.description }}</p>
-                
-                <div class="vuln-footer">
-                    <input type="checkbox"
-                    onchange="toggleResolved('{{ vuln._id }}', this.checked)"
-                {% if vuln.resolved %}checked{% endif %}>
-                    Düzeltilen mi?
-                    </label>
+                    <h4>{{ vuln.title }}</h4>
+                    <p>{{ vuln.description }}</p>
+                    
+                    <div class="vuln-footer">
+                        <label class="checkbox-label">
+                            <input type="checkbox" onchange="toggleResolved('{{ vuln._id }}', this.checked)" {% if vuln.resolved %}checked{% endif %}>
+                            Resolved?
+                        </label>
 
-                    <span class="status" style="background: {{ color }}33; color: {{ color }};">
-                    {{ vuln.severity|capitalize }} | {{ 'Düzeltilen' if vuln.resolved else 'Bakılmayan' }}
-                    </span>
+                        <span class="status" style="background: {{ color }}33; color: {{ color }};">
+                            {{ vuln.severity|capitalize }} | {{ 'Resolved' if vuln.resolved else 'Unresolved' }}
+                        </span>
+                    </div>
                 </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
             </div>
-
-
-            <script>
-            let currentStatus = "all";
-
-            document.getElementById("severityFilter").addEventListener("change", () => {
-                filterByStatus(currentStatus);
-            });
-
-            function filterByStatus(status) {
-                currentStatus = status;
-                const items = document.querySelectorAll(".list-item");
-                const selectedSeverity = document.getElementById("severityFilter").value;
-
-                items.forEach(item => {
-                    const itemSeverity = item.dataset.severity;
-                    const itemStatus = item.dataset.status;
-
-                    const matchSeverity = selectedSeverity === "all" || itemSeverity === selectedSeverity;
-                    const matchStatus = status === "all" || itemStatus === status;
-
-                    item.style.display = (matchSeverity && matchStatus) ? "block" : "none";
-                });
-            }
-            </script>
         </section>
 
-
-        <!-- Taramalar -->
+        <!-- Scans Section -->
         <section id="scans" class="content-section">
             <div class="dashboard-header">
-                <h1>🔍 Taramalar</h1>
-                <p>Gerçekleştirilen ve planlanmış tarama işlemleri</p>
+                <h1>🔍 Network Scans</h1>
+                <p>Performed and scheduled scan operations</p>
             </div>
             <div class="cards-grid">
                 <div class="card" id="nmap-scan-trigger">
                     <span class="card-icon">🛰️</span>
-                    <h3>Port (Nmap) Taraması</h3>
-                    <p>Hedef sistemde açık portları tespit etmek için hızlı Nmap taraması başlat.</p>
+                    <h3>Port Scan (Nmap)</h3>
+                    <p>Start a quick Nmap scan to detect open ports on target systems.</p>
                 </div>
 
                 <div class="card" id="custom-scan-trigger">
                     <span class="card-icon">🎯</span>
-                    <h3>Özel Tarama</h3>
-                    <p>Belirli servislere odaklanmış detaylı güvenlik analizi ve açık taraması.</p>
+                    <h3>Custom Scan</h3>
+                    <p>Detailed security analysis and vulnerability scan focused on specific services.</p>
                 </div>
                 
                 <div class="card">
                     <span class="card-icon">🌐</span>
-                    <h3>Ağ Taraması</h3>
-                    <p>Tüm ağ altyapısının kapsamlı güvenlik denetimi ve risk analizi.</p>
+                    <h3>Network Scan</h3>
+                    <p>Comprehensive security audit and risk analysis of entire network infrastructure.</p>
                 </div>
             </div>
-            <!-- Scan geçmişini temizleme butonu -->
-                <div class="d-flex justify-content-end mb-3">
-                    <form action="{{ url_for('goals.clear_scans') }}" method="POST" onsubmit="return confirm('Tüm scan geçmişini silmek istediğine emin misin?');">
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            Scan Geçmişini Temizle
-                        </button>
-                    </form>
+            
+            <!-- Clear scan history button -->
+            <div class="d-flex justify-content-end mb-3">
+                <form action="{{ url_for('goals.clear_scans') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear all scan history?');">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        Clear Scan History
+                    </button>
+                </form>
+            </div>
+            <br><br>
+            
+            <!-- Scan list -->
+            <div class="list-container">
+                {% for scan in scans %}
+                <div class="list-item">
+                    <h4>{{ scan.name }}</h4>
+                    <p>{{ scan.description if scan.description else "No description available" }}</p>
+                    <span class="status {{ scan.status }}">{{ scan.status|capitalize }}</span>
                 </div>
-                <br><br>
-                <!-- Scan listesi -->
-                <div class="list-container">
-                    {% for scan in scans %}
-                    <div class="list-item">
-                        <h4>{{ scan.name }}</h4>
-                        <p>{{ scan.description if scan.description else "Açıklama yok" }}</p>
-                        <span class="status {{ scan.status }}">{{ scan.status|capitalize }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-
+                {% endfor %}
+            </div>
         </section>
         
+        <!-- Terminal Section -->
         <section id="terminal" class="content-section">
             <div class="dashboard-header">
                 <h1>🖥️ Terminal</h1>
-                <p>Komut çıktıları ve terminal işlemleri</p>
+                <p>Command outputs and terminal operations</p>
             </div>
             
             <div class="form-container">
-                <h2>💻 Komut Çalıştır</h2>
+                <h2>💻 Execute Command</h2>
                 <form action="{{ url_for('terminal.execute_command') }}" method="POST">
                     <div class="form-group">
-                        <label for="command">Komut (İzin verilen: ls, whoami, id, pwd, uname, uptime, ps, df, free)</label>
+                        <label for="command">Command (Allowed: ls, whoami, id, pwd, uname, uptime, ps, df, free)</label>
                         <input type="text" name="command" id="command" required placeholder="ls -la" autocomplete="off">
                     </div>
-                    <button type="submit" class="submit-btn">▶️ Çalıştır</button>
+                    <button type="submit" class="submit-btn">▶️ Execute</button>
                 </form>
             </div>
             
             <div class="terminal-box" style="background: #1a1a1a; border-radius: 15px; padding: 20px; margin-top: 20px;">
-                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: #00ff00; margin: 0;">Terminal Çıktısı</h3>
-                    <button onclick="clearTerminal()" class="submit-btn" style="padding: 8px 16px; font-size: 12px;">🗑️ Temizle</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: #00ff00; margin: 0;">Terminal Output</h3>
+                    <button onclick="clearTerminal()" class="submit-btn" style="padding: 8px 16px; font-size: 12px;">🗑️ Clear</button>
                 </div>
                 <pre id="terminal-content" style="color: #00ff00; font-family: 'Courier New', monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto;">{{ terminal_output }}</pre>
             </div>
         </section>
     </main>
 
-    <!-- Nmap Taraması Modalı -->
-    <!-- Nmap Modal -->
-<div id="nmapModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2>🔍 Özelleştirilmiş Nmap Taraması</h2>
-        <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
-            <div class="form-group">
-                <label for="target">Hedef Seç</label>
-                <select name="target" id="target" required>
-                    {% for goal in goals %}
-                        <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    <!-- Nmap Scan Modal -->
+    <div id="nmapModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>🔍 Custom Nmap Scan</h2>
+            <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
+                <div class="form-group">
+                    <label for="target">Select Target</label>
+                    <select name="target" id="target" required>
+                        {% for goal in goals %}
+                            <option value="{{ goal.ip }}">{{ goal.name }} - {{ goal.ip }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="scan_type">Tarama Türü</label>
-                <select name="scan_type" id="scan_type" required>
-                    <option value="basic" selected>Temel (-sV)</option>
-                    <option value="stealth">Stealth (-sS)</option>
-                    <option value="udp">UDP (-sU)</option>
-                    <option value="aggressive">Agresif (-A)</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="scan_type">Scan Type</label>
+                    <select name="scan_type" id="scan_type" required>
+                        <option value="basic" selected>Basic (-sV)</option>
+                        <option value="stealth">Stealth (-sS)</option>
+                        <option value="udp">UDP (-sU)</option>
+                        <option value="aggressive">Aggressive (-A)</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="speed">Tarama Hızı (T1-T5)</label>
-                <select name="speed" id="speed" required>
-                    <option value="T1">T1 - En yavaş</option>
-                    <option value="T2">T2</option>
-                    <option value="T3">T3</option>
-                    <option value="T4" selected>T4 - Önerilen</option>
-                    <option value="T5">T5 - En hızlı</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="speed">Scan Speed (T1-T5)</label>
+                    <select name="speed" id="speed" required>
+                        <option value="T1">T1 - Slowest</option>
+                        <option value="T2">T2</option>
+                        <option value="T3">T3</option>
+                        <option value="T4" selected>T4 - Recommended</option>
+                        <option value="T5">T5 - Fastest</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="ports">Portlar</label>
-                <select name="ports" id="ports" onchange="toggleCustomPorts()">
-                    <option value="top" selected>En Yaygın 100</option>
-                    <option value="all">Tüm Portlar</option>
-                    <option value="custom">Özel</option>
-                </select>
-                <input type="text" name="custom_ports" id="custom_ports_input" placeholder="örn: 80,443,8080" style="display:none; margin-top: 5px;">
-            </div>
+                <div class="form-group">
+                    <label for="ports">Ports</label>
+                    <select name="ports" id="ports" onchange="toggleCustomPorts()">
+                        <option value="top" selected>Top 100 Most Common</option>
+                        <option value="all">All Ports</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="text" name="custom_ports" id="custom_ports_input" placeholder="e.g: 80,443,8080" style="display:none; margin-top: 5px;">
+                </div>
 
-            <div class="form-group">
-                <label>
-                <input type="checkbox" name="os_detect"> İşletim Sistemi Tespiti (-O)
-                </label>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="os_detect"> OS Detection (-O)
+                    </label>
+                    <br>
+                    <label>
+                        <input type="checkbox" name="script_scan"> Script Scan (-sC)
+                    </label>
+                </div>
 
-                <br>
-                <label>
-                    <input type="checkbox" name="script_scan"> Script Taraması (-sC)
-                </label>
-            </div>
-
-            <button type="submit" class="submit-btn">🚀 Taramayı Başlat</button>
-        </form>
+                <button type="submit" class="submit-btn">🚀 Start Scan</button>
+            </form>
+        </div>
     </div>
-</div>
 
-
-
-    <!-- Özel Tarama Modalı -->
+    <!-- Custom Scan Modal -->
     <div id="customScanModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeCustomScanModal()">&times;</span>
-            <h2>🎯 Özel Tarama</h2>
+            <h2>🎯 Custom Scan</h2>
             <form action="{{ url_for('scans.start_custom_scan') }}" method="POST">
                 <div class="form-group">
-                    <label for="custom_target">Hedef</label>
-                    <input type="text" name="target" id="custom_target" required placeholder="192.168.1.1 veya domain.com">
+                    <label for="custom_target">Target</label>
+                    <input type="text" name="target" id="custom_target" required placeholder="192.168.1.1 or domain.com">
                 </div>
                 <div class="form-group">
-                    <label for="scan_type">Tarama Tipi</label>
-                    <select name="scan_type" id="scan_type" required style="width: 100%; padding: 10px; border-radius: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
-                        <option value="basic">Temel Tarama</option>
-                        <option value="aggressive">Agresif Tarama</option>
-                        <option value="stealth">Gizli Tarama</option>
-                        <option value="udp">UDP Taraması</option>
+                    <label for="custom_scan_type">Scan Type</label>
+                    <select name="scan_type" id="custom_scan_type" required style="width: 100%; padding: 10px; border-radius: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
+                        <option value="basic">Basic Scan</option>
+                        <option value="aggressive">Aggressive Scan</option>
+                        <option value="stealth">Stealth Scan</option>
+                        <option value="udp">UDP Scan</option>
                     </select>
                 </div>
-                <button type="submit" class="submit-btn">🚀 Özel Taramayı Başlat</button>
+                <button type="submit" class="submit-btn">🚀 Start Custom Scan</button>
             </form>
         </div>
     </div>
@@ -372,6 +341,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Load vulnerability chart
         fetch("/api/vulnerabilities")
             .then(res => res.json())
             .then(data => {
@@ -386,7 +356,7 @@
                 new Chart(ctx, {
                     type: "doughnut",
                     data: {
-                        labels: ["Kritik", "Yüksek", "Orta", "Düşük"],
+                        labels: ["Critical", "High", "Medium", "Low"],
                         datasets: [{
                             data: [counts.critical, counts.high, counts.medium, counts.low],
                             backgroundColor: ["#f44336", "#FF9800", "#FFC107", "#4CAF50"]
@@ -432,6 +402,30 @@
         });
     });
 
+    // Vulnerability filtering
+    let currentStatus = "all";
+
+    document.getElementById("severityFilter").addEventListener("change", () => {
+        filterByStatus(currentStatus);
+    });
+
+    function filterByStatus(status) {
+        currentStatus = status;
+        const items = document.querySelectorAll(".list-item");
+        const selectedSeverity = document.getElementById("severityFilter").value;
+
+        items.forEach(item => {
+            const itemSeverity = item.dataset.severity;
+            const itemStatus = item.dataset.status;
+
+            const matchSeverity = selectedSeverity === "all" || itemSeverity === selectedSeverity;
+            const matchStatus = status === "all" || itemStatus === status;
+
+            item.style.display = (matchSeverity && matchStatus) ? "block" : "none";
+        });
+    }
+
+    // Modal functions
     function closeModal() {
         document.getElementById("nmapModal").style.display = "none";
     }
@@ -440,6 +434,20 @@
         document.getElementById("customScanModal").style.display = "none";
     }
 
+    function toggleCustomPorts() {
+        const portsSelect = document.getElementById("ports");
+        const customPortsInput = document.getElementById("custom_ports_input");
+        
+        if (portsSelect.value === "custom") {
+            customPortsInput.style.display = "block";
+            customPortsInput.required = true;
+        } else {
+            customPortsInput.style.display = "none";
+            customPortsInput.required = false;
+        }
+    }
+
+    // Terminal functions
     function loadTerminalOutput() {
         fetch("/terminal/output")
             .then(res => res.json())
@@ -454,10 +462,28 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById("terminal-content").textContent = "Terminal temizlendi...";
+                    document.getElementById("terminal-content").textContent = "Terminal cleared...";
                 }
             })
             .catch(err => console.error('Error clearing terminal:', err));
+    }
+
+    // Toggle vulnerability resolved status
+    function toggleResolved(vulnId, isResolved) {
+        fetch(`/api/vulnerabilities/${vulnId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ resolved: isResolved })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // Refresh to update the UI
+            }
+        })
+        .catch(err => console.error('Error toggling vulnerability status:', err));
     }
 
     // Auto-refresh terminal output every 5 seconds when terminal tab is active
@@ -468,7 +494,7 @@
         }
     }, 5000);
 
-    // Terminal sekmesine geçildiğinde çıktıyı göster
+    // Load terminal output when switching to terminal tab
     document.querySelector('[data-section="terminal"]').addEventListener("click", loadTerminalOutput);
     </script>
 </body>

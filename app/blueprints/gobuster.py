@@ -13,7 +13,7 @@ def create_wordlists():
     os.makedirs('wordlists', exist_ok=True)
     
     # Default wordlist
-    wordlist_path = os.path.join('wordlists', 'wordlist.txt')
+    wordlist_path = os.path.join('wordlists', 'gobuster.txt')
     if not os.path.exists(wordlist_path):
         default_words = [
             'admin', 'administrator', 'login', 'test', 'demo', 'backup',
@@ -82,7 +82,7 @@ def create_wordlists():
 create_wordlists()
 
 def detect_directory_vulnerabilities(gobuster_output, target_url):
-    """Gobuster çıktısından potansiyel güvenlik açıklarını tespit et"""
+    """Gobuster çıktısından potansiyel güvenlik açıklarını tespit et - geliştirilmiş versiyon"""
     vulnerabilities = []
     
     for line in gobuster_output.splitlines():
@@ -93,24 +93,68 @@ def detect_directory_vulnerabilities(gobuster_output, target_url):
             if len(parts) >= 2:
                 path = parts[0].strip()
                 status_part = parts[1].split(')')[0].strip()
+                status_code = status_part.split()[0] if status_part else ""
                 
-                # Check for sensitive directories/files
+                # Enhanced sensitive paths with meaningful titles
                 sensitive_paths = {
-                    'admin': 'high',
-                    'phpmyadmin': 'high',
-                    'config': 'medium',
-                    'backup': 'medium',
-                    'logs': 'medium',
-                    'test': 'low',
-                    'dev': 'medium',
-                    'staging': 'medium'
+                    # High severity - Critical security risks
+                    'admin': ('high', 'Admin Panel Discovered'),
+                    'administrator': ('high', 'Administrator Interface'),
+                    'phpmyadmin': ('high', 'phpMyAdmin Interface'),
+                    'wp-admin': ('high', 'WordPress Admin Panel'),
+                    'cpanel': ('high', 'cPanel Interface'),
+                    'panel': ('high', 'Control Panel'),
+                    'config': ('high', 'Configuration Directory'),
+                    'backup': ('high', 'Backup Directory'),
+                    'backups': ('high', 'Backup Files'),
+                    '.env': ('high', 'Environment Configuration File'),
+                    'database': ('high', 'Database Directory'),
+                    'db': ('high', 'Database Files'),
+                    'mysql': ('high', 'MySQL Interface'),
+                    'adminer': ('high', 'Database Admin Tool'),
+                    
+                    # Medium severity - Potentially sensitive
+                    'logs': ('medium', 'Log Directory'),
+                    'log': ('medium', 'Log Files'),
+                    'uploads': ('medium', 'Upload Directory'),
+                    'files': ('medium', 'File Directory'),
+                    'dev': ('medium', 'Development Environment'),
+                    'development': ('medium', 'Development Directory'),
+                    'test': ('medium', 'Test Environment'),
+                    'testing': ('medium', 'Testing Directory'),
+                    'staging': ('medium', 'Staging Environment'),
+                    'api': ('medium', 'API Endpoint'),
+                    'temp': ('medium', 'Temporary Directory'),
+                    'tmp': ('medium', 'Temp Files'),
+                    'cache': ('medium', 'Cache Directory'),
+                    'private': ('medium', 'Private Directory'),
+                    'secure': ('medium', 'Secure Directory'),
+                    'settings': ('medium', 'Settings Directory'),
+                    'install': ('medium', 'Installation Directory'),
+                    'setup': ('medium', 'Setup Directory'),
+                    
+                    # Low severity - Informational
+                    'info': ('low', 'Information Page'),
+                    'phpinfo': ('low', 'PHP Information Page'),
+                    'readme': ('low', 'Readme File'),
+                    'old': ('low', 'Old Directory'),
+                    'new': ('low', 'New Directory'),
+                    'beta': ('low', 'Beta Environment'),
+                    'alpha': ('low', 'Alpha Environment'),
+                    'demo': ('low', 'Demo Directory'),
+                    'example': ('low', 'Example Directory'),
+                    'docs': ('low', 'Documentation Directory')
                 }
                 
-                for sensitive, severity in sensitive_paths.items():
-                    if sensitive in path.lower():
+                # Check for sensitive directories/files
+                found_vulnerability = False
+                for sensitive, (severity, vuln_type) in sensitive_paths.items():
+                    if sensitive.lower() in path.lower():
+                        full_url = target_url.rstrip('/') + path
+                        
                         vuln = {
-                            "title": f"Sensitive Directory/File Found: {path}",
-                            "description": f"Found potentially sensitive path: {target_url}{path} (Status: {status_part})",
+                            "title": f"{vuln_type}: {path}",
+                            "description": f"{full_url} (Status: {status_part})",
                             "severity": severity,
                             "status": "unresolved",
                             "timestamp": datetime.datetime.utcnow()
@@ -124,8 +168,49 @@ def detect_directory_vulnerabilities(gobuster_output, target_url):
                         
                         if not existing:
                             vulnerabilities.append(vuln)
+                            found_vulnerability = True
+                        break  # Only match first pattern to avoid duplicates
+                
+                # Special status code checks (only if no specific vulnerability found)
+                if not found_vulnerability:
+                    full_url = target_url.rstrip('/') + path
+                    
+                    if status_code == "403":
+                        vuln = {
+                            "title": f"Protected Directory: {path}",
+                            "description": f"{full_url} (Status: 403 Forbidden)",
+                            "severity": "low",
+                            "status": "unresolved",
+                            "timestamp": datetime.datetime.utcnow()
+                        }
+                        
+                        existing = mongo.db.vulnerabilities.find_one({
+                            "title": vuln["title"],
+                            "description": vuln["description"]
+                        })
+                        
+                        if not existing:
+                            vulnerabilities.append(vuln)
+                            
+                    elif status_code == "401":
+                        vuln = {
+                            "title": f"Authentication Required: {path}",
+                            "description": f"{full_url} (Status: 401 Unauthorized)",
+                            "severity": "medium",
+                            "status": "unresolved",
+                            "timestamp": datetime.datetime.utcnow()
+                        }
+                        
+                        existing = mongo.db.vulnerabilities.find_one({
+                            "title": vuln["title"],
+                            "description": vuln["description"]
+                        })
+                        
+                        if not existing:
+                            vulnerabilities.append(vuln)
     
     return vulnerabilities
+
 
 @gobuster_bp.route("", methods=["POST"])
 @login_required
@@ -189,9 +274,8 @@ def gobuster():
     if show_length:
         command.append("-l")
 
-    # Status codes - disable default blacklist first, then set whitelist
-    command += ["-b", ""]  # Disable default blacklist (empty string)
-    command += ["-s", "200,204,301,302,307,401,403"]
+    # Status codes - conservative approach to avoid false positives
+    # Add wildcard detection to handle false positives better  
     
     print(f"[DEBUG] Final command: {' '.join(command)}")
     print("[DEBUG] About to enter try block...")
@@ -236,14 +320,35 @@ def gobuster():
             
         print("[+] Terminal.txt written")
 
-        # Bulunan yollardan güvenlik açıklarını tespit et
+        # Bulunan yollardan güvenlik açıklarını tespit et - geliştirilmiş versiyon
         vulnerabilities = detect_directory_vulnerabilities(output, target)
         print(f"[+] Found {len(vulnerabilities)} vulnerabilities")
+        
+        # Log found vulnerabilities for debugging
+        for vuln in vulnerabilities:
+            print(f"[+] Vulnerability: {vuln['severity']} - {vuln['title']}")
         
         # Tespit edilen açıkları veritabanına ekle
         if vulnerabilities:
             result = mongo.db.vulnerabilities.insert_many(vulnerabilities)
             print(f"[+] Inserted {len(result.inserted_ids)} vulnerabilities to DB")
+            
+            # Success message with vulnerability count and severity breakdown
+            severity_count = {'high': 0, 'medium': 0, 'low': 0}
+            for vuln in vulnerabilities:
+                severity_count[vuln['severity']] += 1
+            
+            success_msg = f"Gobuster taraması tamamlandı! {len(vulnerabilities)} güvenlik açığı tespit edildi. "
+            if severity_count['high'] > 0:
+                success_msg += f"🔴 Yüksek: {severity_count['high']}, "
+            if severity_count['medium'] > 0:
+                success_msg += f"🟡 Orta: {severity_count['medium']}, "
+            if severity_count['low'] > 0:
+                success_msg += f"🟢 Düşük: {severity_count['low']}"
+                
+            flash(success_msg.rstrip(', '), "success")
+        else:
+            flash("Gobuster taraması tamamlandı. Herhangi bir güvenlik açığı tespit edilmedi.", "info")
 
         # Scan kaydını veritabanına ekle
         scan_result = mongo.db.scans.insert_one({
@@ -253,11 +358,10 @@ def gobuster():
             "target": target,
             "command": " ".join(command),
             "output": output,
+            "vulnerabilities_count": len(vulnerabilities),
             "timestamp": datetime.datetime.utcnow()
         })
         print(f"[+] Scan inserted to DB with ID: {scan_result.inserted_id}")
-
-        flash("Gobuster taraması başarıyla tamamlandı.", "success")
 
     except subprocess.TimeoutExpired:
         print("[-] Gobuster scan timed out")
@@ -265,7 +369,24 @@ def gobuster():
     except subprocess.CalledProcessError as e:
         print(f"[-] Gobuster failed with return code {e.returncode}")
         print(f"[-] Error output: {e.output}")
-        flash(f"Gobuster hatası: {e.output}", "danger")
+        
+        # Handle specific gobuster errors with helpful solutions
+        error_output = str(e.output).lower() if e.output else ""
+        
+        if "the server returns a status code that matches the provided options" in error_output:
+            # Extract problematic status and length from error
+            if "403" in error_output and "length:" in error_output:
+                flash("Hedef site 403 hataları ile korumalı. Farklı status kodları ile tekrar deneyin veya --exclude-length parametresi kullanın.", "warning")
+            else:
+                flash("Hedef site false positive yanıtlar veriyor. Status kod filtrelerini kontrol edin.", "warning")
+        elif "no such host" in error_output:
+            flash("Hedef host bulunamadı. URL'yi kontrol edin.", "danger")
+        elif "connection refused" in error_output:
+            flash("Bağlantı reddedildi. Hedef erişilebilir değil veya port kapalı.", "danger")
+        elif "timeout" in error_output:
+            flash("Bağlantı zaman aşımı. Hedef yavaş yanıt veriyor veya erişilemiyor.", "danger")
+        else:
+            flash(f"Gobuster hatası: {e.output}", "danger")
     except FileNotFoundError:
         print("[-] Gobuster executable not found")
         flash("Gobuster kurulu değil!", "danger")
